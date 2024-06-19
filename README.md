@@ -19,7 +19,7 @@ As this project is based on Docker Compose, the only requirement is to have a fa
 
 1. The first step is to clone the repository to your local machine :
     ```
-    git clone https://github.com:evertrust/playground.git
+    git clone https://github.com/evertrust/playground.git
     ```
 
 1. Then, you'll need to configure licenses for both Stream and Horizon. The Compose project expects the following license files to be present :
