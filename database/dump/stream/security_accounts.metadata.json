@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"identifier":{"$numberInt":"1"}},"name":"identifier_idx","unique":true}],"uuid":"51280cf7d9164c46abe3df08c91656c1","collectionName":"security_accounts","type":"collection"}

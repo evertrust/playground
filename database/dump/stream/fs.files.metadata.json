@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"metadata.ca":{"$numberInt":"1"},"metadata.number":{"$numberInt":"1"}},"name":"canumber_idx","unique":true}],"uuid":"c9d970ee60b64d9789c161df6263a3f3","collectionName":"fs.files","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"5708c96c260f45beb70fdbf473978349","collectionName":"fs.files","type":"collection"}
