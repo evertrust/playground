@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"name":{"$numberInt":"1"}},"name":"name_","unique":true}],"uuid":"497e7d1595964cc698ee044795e458e4","collectionName":"security_identity_providers","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"name":{"$numberInt":"1"}},"name":"name_","unique":true}],"uuid":"a50d169e64ce418f8706240a29ec1fd1","collectionName":"security_identity_providers","type":"collection"}
