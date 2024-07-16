@@ -12,7 +12,7 @@ services:
       - horizon
       - stream
   horizon:
-    image: registry.evertrust.io/horizon:2.5.7
+    image: registry.evertrust.io/horizon:2.5.9
     volumes:
       - ./horizon/license:/var/horizon/license/
     environment:

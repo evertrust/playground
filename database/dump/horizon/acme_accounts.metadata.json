@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"keyThumbprint":{"$numberInt":"1"}},"name":"keythumbprint_idx"}],"uuid":"cfc5b44a6f9842f08a748ba223ad69ec","collectionName":"acme_accounts","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"keyThumbprint":{"$numberInt":"1"}},"name":"keythumbprint_idx"}],"uuid":"04cc0a075137457fa32cb9845a6e6a8e","collectionName":"acme_accounts","type":"collection"}
