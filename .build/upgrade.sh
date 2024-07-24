@@ -90,7 +90,7 @@ done
 # $1: $MONGO_VERSION version for the mongo image
 # $2: $DOCKER_MOUNTS different mounting points to the container
 run_mongo() {
-  CONTAINER_NAME=docker run -d "${2}" mongo:"${1}"
+  CONTAINER_NAME="$( docker run -d ${2} mongo:${1} )"
 }
 
 DOCKER_MOUNTS=""
