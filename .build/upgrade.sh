@@ -2,8 +2,6 @@
 
 #./script-upgrade-playground/upgrade.sh --stm_path stream \
 # --hrz_path horizon --hrz_source_version 2.5.0 --hrz_target_version 2.5.7 --stm_source_version 1.2.1 --stm_target_version 2.0.0 --playground_path playground \
-# -n mongo_container
-
 
 STREAM_TO_UPDATE=false
 HORIZON_TO_UPDATE=false
@@ -18,7 +16,7 @@ HORIZON_UPGRADE_VERSION="" #Mandatory if Horizon path specified
 PLAYGROUND_PATH="" #Mandatory if Horizon path specified
 
 MONGO_VERSION="7" #Defines the version for the Mongo image
-CONTAINER_NAME="mongo"
+CONTAINER_NAME="" #Will be generated automatically by Docker
 
 usage() (
     printf "Usage: %s [OPTIONS]\n" "$0"
@@ -31,7 +29,6 @@ usage() (
     printf "  --hrz_path <path>          Set the path to the Horizon source code directory\n"
     printf "  --hrz_source_version <ver> Set the horizon source version\n"
     printf "  --hrz_target_version <ver> Set the horizon target version\n"
-    printf "  -n, --container_name <name> Set the name for the Docker container"
     printf "  -m, --mongo_version <vers> Set the version for the Docker Mongo image"
 )
 
@@ -43,57 +40,48 @@ while [ $# -gt 0 ]; do
       ;;
     --stm_path)
       STREAM_PATH=$(realpath "$2")
-      shift 
-      shift 
+      shift
+      shift
       ;;
     --hrz_path)
       HORIZON_PATH=$(realpath "$2")
-      shift 
-      shift 
+      shift
+      shift
       ;;
     --playground_path)
       PLAYGROUND_PATH=$(realpath "$2")
-      shift 
-      shift 
+      shift
+      shift
       ;;
     -m|--mongo_version)
       MONGO_VERSION="$2"
       shift
       shift
       ;;
-    -n|--container_name)
-      CONTAINER_NAME="$2"
-      shift
-      shift
-      ;;
     --stm_source_version)
       STREAM_SOURCE_VERSION="$2"
-      shift 
-      shift 
+      shift
+      shift
       ;;
     --hrz_source_version)
       HORIZON_SOURCE_VERSION="$2"
-      shift 
-      shift 
+      shift
+      shift
       ;;
     --stm_target_version)
       STREAM_UPGRADE_VERSION="$2"
-      shift 
-      shift 
+      shift
+      shift
       ;;
     --hrz_target_version)
       HORIZON_UPGRADE_VERSION="$2"
-      shift 
-      shift 
+      shift
+      shift
       ;;
-    -*|--*)
+    --*|-*)
       echo "Unknown option $1"
       usage
       exit 1
-      ;;
-    *)
-      POSITIONAL_ARGS+=("$1") # save positional arg ?? to remove
-      shift 
       ;;
   esac
 done
@@ -102,14 +90,8 @@ done
 # $1: $MONGO_VERSION version for the mongo image
 # $2: $DOCKER_MOUNTS different mounting points to the container
 run_mongo() {
-  docker run -d --name "$CONTAINER_NAME" ${2} mongo:${1}
+  CONTAINER_NAME="$( docker run -d ${2} mongo:${1} )"
 }
-
-#Restores the appropriate databases,
-# $1: path to the database to restore
-#mongorestores(){
-#  docker exec "$CONTAINER_NAME" mongorestore $1
-#}
 
 DOCKER_MOUNTS=""
 
@@ -117,7 +99,7 @@ if [ -z "$STREAM_PATH" ] && [ -z "$HORIZON_PATH" ]; then
   echo "Please specify at least the path to Stream's source code or Horizon's source code along with the source version and the target version for the upgrade."
 fi
 
-if [ ! -z "$STREAM_PATH" ]; then
+if [ -n "$STREAM_PATH" ]; then
   # Verifies the presence of the versions for Stream's update
   if [ -z "$STREAM_UPGRADE_VERSION" ] || [ -z "$STREAM_SOURCE_VERSION" ]; then
     echo "Please specify the Stream source version and the target version for the upgrade."
@@ -136,7 +118,7 @@ if [ ! -z "$STREAM_PATH" ]; then
   fi
 fi
 
-if [ ! -z "$HORIZON_PATH" ]; then
+if [ -n "$HORIZON_PATH" ]; then
   # Verifies the presence of the versions for Horizon's update
   if [ -z "$HORIZON_UPGRADE_VERSION" ] || [ -z "$HORIZON_SOURCE_VERSION" ]; then
     echo "Please specify the Horizon source version and the target version for the upgrade."
@@ -158,7 +140,7 @@ if [ -z "$PLAYGROUND_PATH" ]; then
   echo "Missing path to the playground directory."
   exit 1
 fi
-DOCKER_COMPOSE_FILE=$(ls "$PLAYGROUND_PATH" | grep docker-compose)
+DOCKER_COMPOSE_FILE="docker-compose.yml"
 if [ -z "$DOCKER_COMPOSE_FILE" ]
 then
   echo "Error with the path to the Playground directory."
@@ -167,24 +149,23 @@ else
   DOCKER_MOUNTS="$DOCKER_MOUNTS -v $PLAYGROUND_PATH:/playground"
 fi
 
-
 # Run the Docker command
 run_mongo "$MONGO_VERSION" "$DOCKER_MOUNTS"
-sleep 3
 
 if [ "$STREAM_TO_UPDATE" ] ; then
   docker exec "$CONTAINER_NAME" mongorestore --db stream /playground/database/dump/stream
-  docker exec "$CONTAINER_NAME" /stream/sbin/stream-upgrade -m mongodb://localhost:27017/stream -t $STREAM_UPGRADE_VERSION -s $STREAM_SOURCE_VERSION -p /stream/migration -y
-  #docker exec "$CONTAINER_NAME" rm -rf /playground/database/dump/stream
+  docker exec "$CONTAINER_NAME" /stream/sbin/stream-upgrade -m mongodb://localhost:27017/stream -t "$STREAM_UPGRADE_VERSION" -s "$STREAM_SOURCE_VERSION" -p /stream/migration -y
+  docker exec "$CONTAINER_NAME" rm -rf /playground/database/dump/stream
   docker exec "$CONTAINER_NAME" mongodump --out=/playground/database/dump mongodb://localhost:27017/stream
   docker exec "$CONTAINER_NAME" sed -i "s/stream:$STREAM_SOURCE_VERSION/stream:$STREAM_UPGRADE_VERSION/" "/playground/$DOCKER_COMPOSE_FILE"
 fi
 
 if [ "$HORIZON_TO_UPDATE" ] ; then
   docker exec "$CONTAINER_NAME" mongorestore --db horizon /playground/database/dump/horizon
-  docker exec "$CONTAINER_NAME" /horizon/sbin/horizon-upgrade -m mongodb://localhost:27017/horizon -t $HORIZON_UPGRADE_VERSION -s $HORIZON_SOURCE_VERSION -p /horizon/migration -y
-  #docker exec "$CONTAINER_NAME" rm -rf /playground/database/dump/horizon
+  docker exec "$CONTAINER_NAME" /horizon/sbin/horizon-upgrade -m mongodb://localhost:27017/horizon -t "$HORIZON_UPGRADE_VERSION" -s "$HORIZON_SOURCE_VERSION" -p /horizon/migration -y
+  docker exec "$CONTAINER_NAME" rm -rf /playground/database/dump/horizon
   docker exec "$CONTAINER_NAME" mongodump --out=/playground/database/dump mongodb://localhost:27017/horizon
   docker exec "$CONTAINER_NAME" sed -i "s/horizon:$HORIZON_SOURCE_VERSION/horizon:$HORIZON_UPGRADE_VERSION/" "/playground/$DOCKER_COMPOSE_FILE"
 fi
 
+docker stop "$CONTAINER_NAME" && docker rm "$CONTAINER_NAME"
