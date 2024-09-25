@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     env:
-      BASE_CLONE_URL: https://evt:${{ secrets.API_TOKEN_GITLAB }}@gitlab.com/evertrust/
+      BASE_CLONE_URL: https://milairhu:${{ secrets.API_TOKEN_GITLAB }}@gitlab.com/evertrust/
 
     steps:
 
