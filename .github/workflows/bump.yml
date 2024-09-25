@@ -24,6 +24,9 @@ jobs:
   bumper:
     runs-on: ubuntu-22.04
 
+    env:
+      BASE_CLONE_URL: https://evt:${{ secrets.API_TOKEN_GITLAB }}@gitlab.com/evertrust/
+
     steps:
 
       - name: Get root absolute path
@@ -37,22 +40,26 @@ jobs:
       - name: Get repository absolute path
         run: echo "REPO_PATH=$(pwd)" >> $GITHUB_ENV
 
+      - name: Get current date
+        run: echo "DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
       - name: Display values
         run: |
           echo "ROOT_PATH: ${{ env.ROOT_PATH }}"
           echo "REPO_PATH: ${{ env.REPO_PATH }}"
+          echo "DATE: ${{ env.DATE }}"
 
       - name: Cloning Stream
         if: ${{ inputs.stream-target-version }}
         run: |
           cd ${{ env.ROOT_PATH }}
-          git clone -b v${{ inputs.stream-target-version }} "https://milairhu:${{ secrets.API_TOKEN_GITLAB }}@gitlab.com/evertrust/stream.git"
+          git clone -b v${{ inputs.stream-target-version }} "${{ env.BASE_CLONE_URL }}/stream.git"
 
       - name: Cloning Horizon
         if: ${{ inputs.horizon-target-version }}
         run: |
           cd ${{ env.ROOT_PATH }}
-          git clone -b v${{ inputs.horizon-target-version }} "https://milairhu:${{ secrets.API_TOKEN_GITLAB }}@gitlab.com/evertrust/horizon.git"
+          git clone -b v${{ inputs.horizon-target-version }} "${{ env.BASE_CLONE_URL }}/horizon.git"
 
       - name: Running upgrade for both Horizon and Stream
         if: ${{ inputs.stream-target-version && inputs.horizon-target-version }}
@@ -68,17 +75,30 @@ jobs:
         if: ${{ inputs.horizon-target-version  && !inputs.stream-target-version }}
         run: ${{ env.REPO_PATH }}/.build/upgrade.sh --hrz_path ${{ env.ROOT_PATH }}/horizon --hrz_source_version ${{ inputs.horizon-source-version }} --hrz_target_version ${{ inputs.horizon-target-version }} --playground_path ${{ env.REPO_PATH }}
 
-      - name: Log status
-        run: |
-          git status
-
       - name: Grant rights
         run: |
           sudo chown -R $USER:$USER ${{ env.REPO_PATH }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ inputs.stream-target-version && inputs.stream-source-version }}
+        with:
+          title: Update Playground ${{ env.CURRENT_DATE }}
+          commit-message: Update Playground with Stream from v${{ inputs.stream-source-version }} to v${{ inputs.stream-target-version }}
+          branch: update-playgrounnd-${{ env.CURRENT_DATE }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ inputs.horizon-target-version && inputs.horizon-source-version }}
         with:
           title: Update Playground
-          commit-message: Peter has Updated the playground
-          branch: update-playground
+          commit-message: Update Playground with Horizon from v${{ inputs.horizon-source-version }} to v${{ inputs.horizon-target-version }}
+          branch: update-playground-${{ env.CURRENT_DATE }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        if: ${{ inputs.stream-target-version && inputs.stream-source-version && inputs.horizon-target-version && inputs.horizon-source-version }}
+        with:
+          title: Update Playground
+          commit-message: Update Playground with Stream from v${{ inputs.stream-source-version }} to v${{ inputs.stream-target-version }} and Horizon from v${{ inputs.horizon-source-version }} to v${{ inputs.horizon-target-version }}
+          branch: update-playground-${{ env.CURRENT_DATE }}
