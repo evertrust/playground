@@ -12,7 +12,7 @@ services:
       - horizon
       - stream
   horizon:
-    image: registry.evertrust.io/horizon:2.5.9
+    image: registry.evertrust.io/horizon:2.6.2
     volumes:
       - ./horizon/license:/var/horizon/license/
     environment:
@@ -33,7 +33,7 @@ services:
       timeout: 60s
       retries: 7
   stream:
-    image: registry.evertrust.io/stream:2.0.0
+    image: registry.evertrust.io/stream:2.0.6
     platform: linux/amd64
     volumes:
       - ./stream/license:/var/stream/license/
