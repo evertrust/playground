@@ -3,7 +3,7 @@ FROM ubuntu:jammy
 ARG TARGETARCH
 ARG REPOSITORY_USER=""
 ARG REPOSITORY_PASSWORD=""
-ARG CLIENT_VERSION=1.8.1
+ARG CLIENT_VERSION=1.9.3
 
 # Install nginx as a base service to enable automation
 RUN apt update && apt install -y systemd curl nginx
