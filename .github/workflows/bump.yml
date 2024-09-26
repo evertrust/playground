@@ -81,24 +81,24 @@ jobs:
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
-        if: ${{ inputs.stream-target-version && inputs.stream-source-version }}
+        if: ${{ inputs.stream-target-version && inputs.stream-source-version &&!inputs.horizon-target-version }}
         with:
-          title: Update Playground ${{ env.CURRENT_DATE }}
+          title: Update Playground ${{ env.DATE }}
           commit-message: Update Playground with Stream from v${{ inputs.stream-source-version }} to v${{ inputs.stream-target-version }}
-          branch: update-playgrounnd-${{ env.CURRENT_DATE }}
+          branch: update-playgrounnd-${{ env.DATE }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
-        if: ${{ inputs.horizon-target-version && inputs.horizon-source-version }}
+        if: ${{ inputs.horizon-target-version && inputs.horizon-source-version && !inputs.stream-target-version }}
         with:
-          title: Update Playground
+          title: Update Playground ${{ env.DATE }}
           commit-message: Update Playground with Horizon from v${{ inputs.horizon-source-version }} to v${{ inputs.horizon-target-version }}
-          branch: update-playground-${{ env.CURRENT_DATE }}
+          branch: update-playground-${{ env.DATE }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         if: ${{ inputs.stream-target-version && inputs.stream-source-version && inputs.horizon-target-version && inputs.horizon-source-version }}
         with:
-          title: Update Playground
+          title: Update Playground ${{ env.DATE }}
           commit-message: Update Playground with Stream from v${{ inputs.stream-source-version }} to v${{ inputs.stream-target-version }} and Horizon from v${{ inputs.horizon-source-version }} to v${{ inputs.horizon-target-version }}
-          branch: update-playground-${{ env.CURRENT_DATE }}
+          branch: update-playground-${{ env.DATE }}
