@@ -120,3 +120,18 @@ To gain access to the webserver running in the container, add the following line
    ```bash
    ansible-playbook playbook-deploy-apache.yaml
    ```
+
+
+## CI
+
+### Bumping the version
+The GitHub Action in the [`.github/workflows/bump.yml`](.github/workflows/bump.yml) file is used to bump the version of the project. 
+It is triggered manually by specifying the source and target versions of Stream and Horizon.
+After it run, a pull request on the branch used to trigger the workflow is created with the changes.
+
+### Secrets
+To run the workflow, a token with the following permissions is required on Horizon, Stream and Playground repositories :
+- `contents:read`
+- `pull_request:write`
+
+The token must be stored in a CI_TOKEN secret in the repository.
