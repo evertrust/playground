@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"1d74495d0cd244af8bbaa2b2dc038eec","collectionName":"security_roles","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"b526cc9ab0b243969245b116efae4ca0","collectionName":"security_roles","type":"collection"}

@@ -1,1 +1,1 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"name":{"$numberInt":"1"}},"name":"name_idx","unique":true}],"uuid":"907d714048f548579dfe1d8dee418b3b","collectionName":"automation_policies","type":"collection"}
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"name":{"$numberInt":"1"}},"name":"name_idx","unique":true}],"uuid":"7a5ae9be0d03410881f0f35ec6837b63","collectionName":"automation_policies","type":"collection"}
